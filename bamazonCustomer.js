@@ -1,7 +1,8 @@
 var mysql = require("mysql");
-var inquirer = require("inquirer")
+var inquirer = require("inquirer");
+var Table = require('cli-table3');
 //var table or cli-table or ???
-var con = mysql.createConnection({
+var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
@@ -9,63 +10,72 @@ var con = mysql.createConnection({
   database: "bamazon_db"
 });
 
-connection.connect(function(err) {
-    if (err) throw err;
-    console.log("connected as id " + connection.threadId);
-    afterConnection(); 
-  });
+connection.connect(function (err) {
+  if (err) throw err;
+  console.log("connected as id " + connection.threadId);
+  showTable();
+});
 //LAST FUNCTION   connection.end(); //ASYNCHRONOUS DON"T WANT TO HAVE IN WRONG PLACE!!!
+// conncect to table
 
-  // conncect to table
-function afterConnection() {
-    connection.query("SELECT * FROM products", function(err, res) {
-      if (err) 
+function showTable() {
+  var newTable = new Table({
+    head: ['Item Id'.yellow.bold, 'Product Name'.rainbow.italic, 'Price'.green.bgWhite]
+    //colWidths:
+  });
+  connection.query("SELECT * FROM products", function (err, res) {
+    if (err)
       throw (err);
-      console.log(res);
-    
-    });
-  };
-//Display all items ids names prices
- function displayItems (){
-    var response = "SELECT * FROM songs";
-    connection.response(response, function (error, responsse){
-        for (var i =0; i < response.length; i++){
-    //var table =;
-    //table.push
-        };
-    });
- };
-//inquirer 2 messages ask id how many
+    for (var i = 0; i < res.length; i++) {
+      newTable.push([res[i].item_id, res[i].product_name, res[i].price]);
+    }
+    console.log(newTable.toString())
+    customerShop()
+  });
+
+}
 function customerShop() {
-    inquirer.prompt([{
-        name: "id",
-        type:
-        message: "Please pick the item you would like to purchase.",
-    },
-    {
-        name: "quantity",
-        message: "How many of this item to you want?",
-    }])
-    .then(function(answer){
-        if(isNaN(answer.id) || answer.threadId > id.length)
-        console.log("You have picked an incorrect item number. Please try again.");
-        
-        customerShop ()
-    });  
-    updateTable(answer.id, answer.quantity)
-    
-     
-};
-//check availablity
-// 2 way innsufficient quantity or does & fulfill order
-// update SQL need to subtract sale  and show total cost
-// function updateTable(item, quantity) {
-//     var response = "SELECT stock_quantity FROM products WHERE item_id =" + id;
-//     connection.response(response, function (error, responsse){
-//         var itemQuantity = response[0].stock_quantity;
-//         if (parseInt(quantity) >= parseInt(itemQuantity)){}
-//     })
-// }
+  inquirer.prompt([{
+    name: "id",
+    type: "input",
+    message: "Please pick the item by Item Id, you would like to purchase."
+  },
+  {
+    name: "quantity",
+    type: "input",
+    message: "How many of this item to you want?"
+  }])
+  
+  .then(function (answer) {
+    if (isNaN(answer.id) || answer.id !== item_id) {
+      console.log("You have picked an incorrect item number. Please try again.".zebra);
+      customerShop()
+    }
+      connection.query("SELECT price, quantity, FROM ?",{
+        item_id: answer.item_id
+      } function (err, res) {
+        if (err)
+          throw (err)
+          console.log(res)
+      if (answer.quantity >= answer.id(stock_quantity)) {
+        console.log("Insufficient quantity of this item" + answer.id(stock_quantity) + "Please try again".red.underline)
+        customerShop()
+      }
+      else {
+        var newStockQuantity = answer.id(stock_quantity) - answer.quantity;
+        var totalPrice = answer.id(stock_quantity) * answer.id(price)
 
+        connection.query("UPDATE products SET ? WHERE ?", [{
+          stock_quantity: newStockQuantity
 
-    
+        }], function (err) {
+          if (err) 
+              throw err;
+        })
+        if (err === false) {
+          console.log("Thank you for your purchase. Your card was charged a total of ".rainbow + totalPrice.rainbow.bold + "\n")
+        }
+      }
+    })
+  }
+}
