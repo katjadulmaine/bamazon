@@ -1,7 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table3');
-//var table or cli-table or ???
+var colors = require("colors");
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -20,7 +20,7 @@ connection.connect(function (err) {
 
 function showTable() {
   var newTable = new Table({
-    head: ['Item Id'.yellow.bold, 'Product Name'.rainbow.italic, 'Price'.green.bgWhite]
+    head: ['Item Id'.yellow.bold, 'Product Name'.rainbow.italic, 'Price'.america]
     //colWidths:
   });
   connection.query("SELECT * FROM products", function (err, res) {
@@ -47,23 +47,37 @@ function customerShop() {
   }])
   
   .then(function (answer) {
-    if (isNaN(answer.id) || answer.id !== item_id) {
-      console.log("You have picked an incorrect item number. Please try again.".zebra);
-      customerShop()
-    }
-      connection.query("SELECT price, quantity, FROM ?",{
-        item_id: answer.item_id
-      } function (err, res) {
-        if (err)
-          throw (err)
-          console.log(res)
-      if (answer.quantity >= answer.id(stock_quantity)) {
-        console.log("Insufficient quantity of this item" + answer.id(stock_quantity) + "Please try again".red.underline)
+    connection.query("SELECT * FROM products WHERE item_id =" + answer.id, function (err, res) {
+      if (err)
+        throw (err);
+        if (res.length === 0){
+          console.log('that item ID was incorrect')
+          showTable();
+        }
+      console.log(res)
+      var product = res[0]
+      var itemID = product.item_id;
+      var stockQuantity = product.stock_quantity;
+      var price = product.price;
+      var cart = product.product_name;
+
+    // if (isNaN(answer.id) || answer.id !== itemID) {
+    //   console.log("You have picked an incorrect item number. Please try again.".zebra);
+    //   customerShop()
+    // }
+      // connection.query("SELECT price, quantity, FROM ?",{
+      //   itemID: answer.item_id
+      // },function(err, res) {
+      //   if (err)
+      //     throw (err)
+      //     console.log(res)
+      if (answer.quantity >= (stockQuantity)) {
+        console.log("Insufficient quantity of this item" + stockQuantity + "Please try again".red.underline)
         customerShop()
       }
       else {
-        var newStockQuantity = answer.id(stock_quantity) - answer.quantity;
-        var totalPrice = answer.id(stock_quantity) * answer.id(price)
+        var newStockQuantity = stockQuantity - answer.quantity;
+        var totalPrice = stockQuantity * price
 
         connection.query("UPDATE products SET ? WHERE ?", [{
           stock_quantity: newStockQuantity
@@ -73,9 +87,9 @@ function customerShop() {
               throw err;
         })
         if (err === false) {
-          console.log("Thank you for your purchase. Your card was charged a total of ".rainbow + totalPrice.rainbow.bold + "\n")
+          console.log("Thank you for your purchase. Your card was charged a total of ".rainbow + totalPrice.rainbow.bold + "\n");
         }
       }
     })
-  }
-}
+  })
+};
