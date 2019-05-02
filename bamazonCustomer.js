@@ -65,6 +65,7 @@ function customerShop() {
             showTable();
           }
 
+<<<<<<< HEAD
           var product = res[0];
           var stockQuantity = product.stock_quantity;
           var price = product.price;
@@ -111,4 +112,15 @@ function customerShop() {
         })
       }
     })
+=======
+          }], function (err, res) {
+            if (err) throw err;           
+          }
+          )
+        } if (res !== err){
+          console.log("Thank you for your purchase of ".rainbow + cart + " . Your card was charged a total of " + totalPrice + ".\n It was a pleasure doing business with you please come back again soon.\n".rainbow);
+        }
+    })}
+    )
+>>>>>>> 8e91e3e5aaea90ec5a21907b39490cc76dab495c
 };
