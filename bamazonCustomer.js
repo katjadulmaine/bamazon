@@ -77,9 +77,7 @@ function customerShop() {
             id: answer.id
 
           }], function (err, res) {
-            if (err) throw err; 
-            console.log("wtf")
-          
+            if (err) throw err;           
           }
           )
         } if (res !== err){
