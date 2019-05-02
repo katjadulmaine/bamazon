@@ -34,6 +34,7 @@ function showTable() {
 
 }
 function customerShop() {
+
   inquirer.prompt([{
     name: "id",
     type: "input",
@@ -53,38 +54,37 @@ function customerShop() {
           console.log("That item ID was incorrect, please try again.")
           showTable();
         }
-
+        
         var product = res[0];
         var stockQuantity = product.stock_quantity;
         var price = product.price;
-        var itemID = product.item_id;
+        var id = product.item_id;
         var cart = product.product_name;
 
         if (answer.quantity > stockQuantity) {
           console.log("Insufficient quantity of this item. We have  " + stockQuantity.bold + " Please try again".red.underline)
           customerShop()
         }
-        else if {
-          var answerID = answer.id;
-          var newStockQuantity = stockQuantity - answer.quantity;
+        else {
+          var newStockQuantity = res[0].stock_quantity - answer.quantity;
           var total = price * answer.quantity;
           var totalPrice = total.toFixed(2);
-        
+          
           connection.query("UPDATE products SET ? WHERE ?", [{
-            stock_quantity: newStockQuantity
+            stockQuantity: newStockQuantity
           },
           {
-            item_ID: answerID
+            id: answer.id
 
-          }], function (err) {
+          }], function (err, res) {
             if (err) throw err; 
+            console.log("wtf")
           
-          else if((err) === false){
-            console.log("Thank you for your purchase of " ++ cart + " . Your card was charged a total of " + totalPrice.bold + " It was a pleasure doing business with you please come back again soon.\n").rainbow;
-          }
           }
           )
-        } 
+        } if (res !== err){
+          console.log("Thank you for your purchase of ".rainbow + cart + " . Your card was charged a total of " + totalPrice + ".\n It was a pleasure doing business with you please come back again soon.\n".rainbow);
+        }
     })}
     )
 };
