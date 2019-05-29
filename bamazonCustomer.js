@@ -35,7 +35,7 @@ function showTable() {
       newTable.push([res[i].item_id, res[i].product_name, res[i].price]);
       id = res[i].item_id;
       stock = res[i].stock_quantity;
-      console.log(res[i].item_id);
+     
     }
     console.log(newTable.toString())
     customerShop()
@@ -62,10 +62,9 @@ function customerShop() {
             throw (err);
           if (res.length === 0) {
             console.log("That item ID was incorrect, please try again.")
-            showTable();
+            return setTimeout(showTable, 1500);
           }
 
-<<<<<<< HEAD
           var product = res[0];
           var stockQuantity = product.stock_quantity;
           var price = product.price;
@@ -105,6 +104,7 @@ function customerShop() {
               if (err) throw err;
               if (res !== err) {
                 console.log("Thank you for your purchase of ".rainbow + cart + " . Your card was charged a total of " + totalPrice + ".\n It was a pleasure doing business with you please come back again soon.\n".rainbow);
+                showTable()
               }
             }
             )
@@ -112,15 +112,4 @@ function customerShop() {
         })
       }
     })
-=======
-          }], function (err, res) {
-            if (err) throw err;           
-          }
-          )
-        } if (res !== err){
-          console.log("Thank you for your purchase of ".rainbow + cart + " . Your card was charged a total of " + totalPrice + ".\n It was a pleasure doing business with you please come back again soon.\n".rainbow);
-        }
-    })}
-    )
->>>>>>> 8e91e3e5aaea90ec5a21907b39490cc76dab495c
 };
